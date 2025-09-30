@@ -1,6 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://dh606i2o7tyx3"]
+[gd_scene load_steps=11 format=3 uid="uid://dh606i2o7tyx3"]
 
 [ext_resource type="AudioStream" uid="uid://c0clrpbsrxht8" path="res://Charts/Sayonara.noc/Sayonara-Hatsukoi.ogg" id="1_h337q"]
+[ext_resource type="Material" uid="uid://c7djbnxpeasph" path="res://Textures/leftest_ground_tracks.tres" id="1_me05n"]
+[ext_resource type="Material" uid="uid://dagy7ggnajc6m" path="res://Textures/ground_tracks.tres" id="2_ek0ft"]
+[ext_resource type="Material" uid="uid://dduikhdoviq0d" path="res://Textures/rightest_ground_tracks.tres" id="3_blpvf"]
 
 [sub_resource type="Environment" id="Environment_7ldut"]
 background_mode = 1
@@ -15,11 +18,17 @@ size = Vector3(8.16, 0.02, 0.04)
 [sub_resource type="BoxMesh" id="BoxMesh_6n8b6"]
 size = Vector3(5, 0.02, 0.04)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_y0gf2"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_12ds4"]
+material = ExtResource("1_me05n")
 size = Vector2(1.5, 50)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_me05n"]
+material = ExtResource("2_ek0ft")
 size = Vector2(1, 50)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_y0gf2"]
+material = ExtResource("3_blpvf")
+size = Vector2(1.5, 50)
 
 [node name="GameMain" type="Node3D"]
 
@@ -27,7 +36,7 @@ size = Vector2(1, 50)
 environment = SubResource("Environment_7ldut")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.8829476, 0.4694716, 0, -0.4694716, 0.8829476, 0, 4, 2.7099247)
+transform = Transform3D(1, 0, 0, 0, 0.8829476, 0.4694716, 0, -0.4694716, 0.8829476, 0, 3.5, 2.71)
 fov = 60.0
 far = 200.0
 
@@ -43,7 +52,7 @@ skeleton = NodePath("../..")
 
 [node name="Track0" type="MeshInstance3D" parent="Tracks"]
 transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, -2.85, 0.375, -20)
-mesh = SubResource("PlaneMesh_y0gf2")
+mesh = SubResource("PlaneMesh_12ds4")
 skeleton = NodePath("../Track2")
 
 [node name="Track1" type="MeshInstance3D" parent="Tracks"]
