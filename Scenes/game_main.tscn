@@ -1,0 +1,75 @@
+[gd_scene load_steps=7 format=3 uid="uid://dh606i2o7tyx3"]
+
+[ext_resource type="AudioStream" uid="uid://c0clrpbsrxht8" path="res://Charts/Sayonara.noc/Sayonara-Hatsukoi.ogg" id="1_h337q"]
+
+[sub_resource type="Environment" id="Environment_7ldut"]
+background_mode = 1
+background_color = Color(0.8371184, 0.67228323, 0.9798587, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_h337q"]
+size = Vector3(8.16, 0.02, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6n8b6"]
+size = Vector3(5, 0.02, 0.04)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_y0gf2"]
+size = Vector2(1.5, 50)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_me05n"]
+size = Vector2(1, 50)
+
+[node name="GameMain" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7ldut")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8829476, 0.4694716, 0, -0.4694716, 0.8829476, 0, 4, 2.7099247)
+fov = 60.0
+far = 200.0
+
+[node name="Tracks" type="Node" parent="."]
+
+[node name="SkyJudgementLine" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.645, -0.5)
+mesh = SubResource("BoxMesh_h337q")
+
+[node name="JudgementLine" type="MeshInstance3D" parent="Tracks"]
+mesh = SubResource("BoxMesh_6n8b6")
+skeleton = NodePath("../..")
+
+[node name="Track0" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 0, 0, 1, -2.85, 0.375, -20)
+mesh = SubResource("PlaneMesh_y0gf2")
+skeleton = NodePath("../Track2")
+
+[node name="Track1" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0, -20)
+mesh = SubResource("PlaneMesh_me05n")
+skeleton = NodePath("../Track2")
+
+[node name="Track2" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.525, 0, -20)
+mesh = SubResource("PlaneMesh_me05n")
+
+[node name="Track3" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.525, 0, -20)
+mesh = SubResource("PlaneMesh_me05n")
+skeleton = NodePath("../Track2")
+
+[node name="Track4" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0, -20)
+mesh = SubResource("PlaneMesh_me05n")
+skeleton = NodePath("../Track2")
+
+[node name="Track5" type="MeshInstance3D" parent="Tracks"]
+transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 2.85, 0.375, -20)
+mesh = SubResource("PlaneMesh_y0gf2")
+skeleton = NodePath("../Track2")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_h337q")
+autoplay = true
