@@ -28,3 +28,6 @@ func _process(delta):
 	if new_z > 5.0: # 5.0 是一个容错值
 		print("Note错过了")
 		queue_free()
+
+func get_is_note():
+	return true
