@@ -20,7 +20,6 @@ func _process(delta):
 	# 核心公式：位置 = (剩余时间 / 总时间) * 总距离
 	var time_to_hit = target_time - current_time
 	var new_z = note_spawn_z * (time_to_hit / (target_time - note_spawn_time))
-	print(time_to_hit / (target_time - note_spawn_time))
 	
 	# 更新自己的位置
 	position.z = new_z
