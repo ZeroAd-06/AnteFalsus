@@ -3,6 +3,8 @@ extends Node3D
 
 @onready var music_player = $MusicPlayer
 @onready var score_display = $ScoreDisplay
+@onready var sky_cursor = $SkyCursor
+var currently_active_arc = null
 
 # 游戏内的当前时间（秒）
 var song_position_sec: float = 0.0
@@ -29,6 +31,8 @@ const NOTE_SPAWN_Z = -50.0
 const NOTE_SPEED = 40.0
 # 预加载Note场景
 const NOTE_SCENE = preload("res://Scenes/note.tscn")
+# 预加载 ArcNote 场景
+const ARC_NOTE_SCENE = preload("res://Scenes/arc_note.tscn")
 
 
 # 临时存放谱面数据
@@ -539,8 +543,29 @@ var chart_data = [
 	[195.507, 5]
 ]
 
-
+var arc_chart_data = [
+	[
+		5.0, # Arc 开始时间
+		8.0, # Arc 结束时间
+		# -- 构成这个Arc的所有关键点 --
+		[
+			[5.0, -2.0, -1.0, "linear"], # 开始点：时间5.0, 范围[-2, -1]
+			[6.5, 2.0, 3.0, "linear"],  # 检查点：时间6.5, 范围[2, 3]
+			[8.0, 0.0, 1.0, "linear"]   # 结束点：时间8.0, 范围[0, 1]
+		]
+	],
+	# 你可以在这里添加更多的 Arc
+	[
+		10.0, 15.0,
+		[
+			[10.0, -3.0, 3.0, "linear"],
+			[12.5, -0.5, 0.5, "linear"],
+			[15.0, -3.0, 3.0, "linear"]
+		]
+	]
+]
 var next_note_index = 0
+var next_arc_index = 0
 
 func _ready():
 	# 游戏开始时调用
@@ -571,6 +596,53 @@ func _process(_delta):
 		if song_position_sec >= note_time - spawn_lead_time:
 			spawn_note(note_time, next_note[1])
 			next_note_index += 1
+	
+			# --- Arc Note 生成逻辑 ---
+	if next_arc_index < arc_chart_data.size():
+		var next_arc_data = arc_chart_data[next_arc_index]
+		var arc_start_time = next_arc_data[0]
+		
+		# Arc 的生成时机是它的 "最远端" 快要进入视野时
+		# 我们用 Arc 的结束时间来计算
+		var arc_end_time = next_arc_data[1]
+		var z_length_of_arc = (arc_end_time - arc_start_time) * NOTE_SPEED
+		var spawn_lead_time = (abs(NOTE_SPAWN_Z) + z_length_of_arc) / NOTE_SPEED
+		if song_position_sec >= arc_start_time - spawn_lead_time:
+			spawn_arc(next_arc_data)
+			next_arc_index += 1
+	
+	# --- Arc 连续判定逻辑 ---
+	# 首先，检查是否有新的 Arc 变成了 "当前活跃" 的
+	# 注意：这里的实现比较简单，实际项目中你可能需要把所有arc存起来再查找
+	if currently_active_arc == null:
+		for node in get_children():
+			if node is ArcNote and song_position_sec >= node.start_time and song_position_sec <= node.end_time:
+				currently_active_arc = node
+				break
+	
+	# 如果有活跃的 Arc，进行判定
+	if currently_active_arc:
+		# 检查 Arc 是否已经结束
+		if song_position_sec > currently_active_arc.end_time:
+			print("Arc completed!")
+			currently_active_arc = null
+		else:
+			# 获取当前时间点，Arc要求的左右边界
+			var boundaries = currently_active_arc.get_boundaries_at_time(song_position_sec)
+			var cursor_x = sky_cursor.position.x
+			
+			# 开始判定！
+			if cursor_x >= boundaries.x and cursor_x <= boundaries.y:
+				# 在区间内
+				# print("Arc: EXACT+") # 频繁打印会卡，先注释掉
+				# 可以在这里持续加分
+				scores += (100000000.0 / 504.0 / 60.0) # 假设一秒60帧，分数均摊
+				score_display.scores = int(scores)
+			else:
+				# 在区间外
+				print("Arc: EMPTY")
+
+
 
 func spawn_note(time, track):
 	var note_instance = NOTE_SCENE.instantiate()
@@ -590,6 +662,26 @@ func spawn_note(time, track):
 	
 	# 把它添加到场景树中
 	add_child(note_instance)
+
+func spawn_arc(arc_data):
+	var arc_instance = ARC_NOTE_SCENE.instantiate()
+	
+	# 传递必要的信息
+	arc_instance.note_speed = NOTE_SPEED
+	arc_instance.start_time = arc_data[0]
+	arc_instance.end_time = arc_data[1]
+	arc_instance.key_points = arc_data[2]
+	
+	# 计算初始位置
+	# 这里的逻辑是关键：我们计算出在生成的这一刻，Arc的起点应该在哪个Z坐标
+	# 这样它才能在正确的start_time到达判定线
+	var time_until_start = arc_instance.start_time - song_position_sec
+	arc_instance.position = Vector3(0, 0.675, -time_until_start * NOTE_SPEED)
+	
+	# 先把它添加到场景树中
+	add_child(arc_instance)
+
+
 
 func _input(event):
 	# 检查所有轨道的输入
@@ -630,3 +722,16 @@ func judge_press(track_num):
 	else:
 		# 如果按键时附近没有Note，也可以判定为过早的Empty
 		print("Empty! (Too Early or Missed)")
+
+
+func _unhandled_input(event):
+	# "ui_cancel" 在 Godot 中默认绑定到了 Escape 键
+	if event.is_action_pressed("ui_cancel"):
+		# 检查当前鼠标是什么模式
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			# 如果是锁定模式，就把它改回可见模式
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		elif Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
+			# 如果是可见模式，就再把它锁定回去
+			# 这在测试时很方便，可以随时锁定/解锁鼠标
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

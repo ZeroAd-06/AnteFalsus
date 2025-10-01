@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bp811anuef0fm"]
+
+[ext_resource type="Script" uid="uid://fftwph4ht71f" path="res://Scripts/arc_note.gd" id="1_jaysg"]
+
+[node name="ArcNote" type="Node3D"]
+script = ExtResource("1_jaysg")
+
+[node name="ArcMesh" type="MeshInstance3D" parent="."]

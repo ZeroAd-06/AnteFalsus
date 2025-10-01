@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dh606i2o7tyx3"]
+[gd_scene load_steps=14 format=3 uid="uid://dh606i2o7tyx3"]
 
 [ext_resource type="Script" uid="uid://de6tbq0a6v3xj" path="res://Scripts/game_main.gd" id="1_ek0ft"]
 [ext_resource type="Material" uid="uid://c7djbnxpeasph" path="res://Textures/leftest_ground_tracks.tres" id="1_me05n"]
@@ -6,6 +6,7 @@
 [ext_resource type="Material" uid="uid://dduikhdoviq0d" path="res://Textures/rightest_ground_tracks.tres" id="3_blpvf"]
 [ext_resource type="AudioStream" uid="uid://cm8p14bmeocuo" path="res://Charts/Sayonara.noc/Sayonara-Hatsukoi.mp3" id="5_ek0ft"]
 [ext_resource type="Script" uid="uid://c7jxwjv8m1aih" path="res://Scripts/score_display.gd" id="6_blpvf"]
+[ext_resource type="PackedScene" uid="uid://bg67a4jkycqkk" path="res://Scenes/sky_cursor.tscn" id="7_12ds4"]
 
 [sub_resource type="Environment" id="Environment_7ldut"]
 background_mode = 1
@@ -90,3 +91,6 @@ autoplay = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8205142, 3.4637258, -1.2485552)
 pixel_size = 0.0075
 script = ExtResource("6_blpvf")
+
+[node name="SkyCursor" parent="." instance=ExtResource("7_12ds4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.645, -0.5)
