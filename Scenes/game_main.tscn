@@ -1,5 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://dh606i2o7tyx3"]
+[gd_scene load_steps=12 format=3 uid="uid://dh606i2o7tyx3"]
 
+[ext_resource type="Script" uid="uid://de6tbq0a6v3xj" path="res://Scripts/game_main.gd" id="1_ek0ft"]
 [ext_resource type="AudioStream" uid="uid://c0clrpbsrxht8" path="res://Charts/Sayonara.noc/Sayonara-Hatsukoi.ogg" id="1_h337q"]
 [ext_resource type="Material" uid="uid://c7djbnxpeasph" path="res://Textures/leftest_ground_tracks.tres" id="1_me05n"]
 [ext_resource type="Material" uid="uid://dagy7ggnajc6m" path="res://Textures/ground_tracks.tres" id="2_ek0ft"]
@@ -31,6 +32,7 @@ material = ExtResource("3_blpvf")
 size = Vector2(1.5, 50)
 
 [node name="GameMain" type="Node3D"]
+script = ExtResource("1_ek0ft")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7ldut")
@@ -79,6 +81,7 @@ transform = Transform3D(0.8660254, -0.5, 0, 0.5, 0.8660254, 0, 0, 0, 1, 2.85, 0.
 mesh = SubResource("PlaneMesh_y0gf2")
 skeleton = NodePath("../Track2")
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_h337q")
+volume_db = -80.0
 autoplay = true
