@@ -3,6 +3,7 @@ extends Node3D
 
 @onready var music_player = $MusicPlayer
 @onready var score_display = $ScoreDisplay
+@onready var judge_display = $JudgeDisplay
 @onready var sky_cursor = $SkyCursor
 var currently_active_arc = null
 
@@ -708,12 +709,15 @@ func judge_press(track_num):
 		if abs(diff) <= JUDGE_WINDOW_EXACT_PLUS:
 			print("Exact+! 误差:", diff * 1000, "ms")
 			scores += (100000000 / 504) * 1 + 1
+			judge_display.show_judge("Exact+")
 		elif abs(diff) <= JUDGE_WINDOW_EXACT:
 			print("Exact! 误差:", diff * 1000, "ms")
 			scores += (100000000 / 504) * 1
+			judge_display.show_judge("Exact")
 		elif abs(diff) <= JUDGE_WINDOW_BLUR:
 			print("Blur! 误差:", diff * 1000, "ms")
 			scores += (100000000 / 504) * 0.3
+			judge_display.show_judge("Blur")
 		
 		# 销毁被击中的Note
 		best_note_to_hit.queue_free()
@@ -722,6 +726,7 @@ func judge_press(track_num):
 	else:
 		# 如果按键时附近没有Note，也可以判定为过早的Empty
 		print("Empty! (Too Early or Missed)")
+		judge_display.show_judge("Empty")
 
 
 func _unhandled_input(event):
