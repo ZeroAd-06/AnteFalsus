@@ -1,4 +1,5 @@
 # note.gd
+class_name Note
 extends Node3D
 
 # 这个Note应该被击中的时间（秒）

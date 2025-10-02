@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcrswf5um2t82"]
+
+[ext_resource type="Script" uid="uid://b2yoegy30vn8l" path="res://Scripts/slide_note.gd" id="1_40hrh"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_40hrh"]
+left_to_right = 1.0
+size = Vector3(1, 5, 0.05)
+
+[node name="SlideNote" type="Node3D"]
+script = ExtResource("1_40hrh")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -2.5)
+mesh = SubResource("PrismMesh_40hrh")

@@ -91,7 +91,6 @@ func get_boundaries_at_time(time: float) -> Vector2:
 
 func _process(delta):
 	position.z += note_speed * delta
-	print(position.z)
 
 	var current_time = get_parent().song_position_sec
 	

@@ -17,6 +17,8 @@ const JUDGE_WINDOW_EXACT_PLUS = 0.025
 const JUDGE_WINDOW_EXACT = 0.050
 const JUDGE_WINDOW_BLUR = 0.125
 const JUDGE_WINDOW_EMPTY = 0.300 # 用于处理过早按键
+# Slide Note 判定的滑动距离阈值 (游戏单位)
+const SLIDE_JUDGE_THRESHOLD = 0.8
 # 地面轨道对应的x轴坐标
 const TRACKS_X = [-2.85, -1.6, -0.525, 0.525, 1.6, 2.85]
 # 地面轨道对应的y轴坐标
@@ -33,6 +35,8 @@ const NOTE_SPEED = 40.0
 const NOTE_SCENE = preload("res://Scenes/note.tscn")
 # 预加载 ArcNote 场景
 const ARC_NOTE_SCENE = preload("res://Scenes/arc_note.tscn")
+# 预加载 SlideNote 场景
+const SLIDE_NOTE_SCENE = preload("res://Scenes/slide_note.tscn")
 
 
 # 临时存放谱面数据
@@ -564,8 +568,15 @@ var arc_chart_data = [
 		]
 	]
 ]
+var slide_chart_data = [
+	[3.0, 0.0, 3.0, 1],   # 在 3.0s, 中间位置, 宽度3, 向右滑
+	[4.5, -2.0, 2.5, -1], # 在 4.5s, 偏左位置, 宽度2.5, 向左滑
+	[7.0, 2.0, 2.5, 1],   # 在 7.0s, 偏右位置, 宽度2.5, 向右滑
+]
+var next_slide_index = 0
 var next_note_index = 0
 var next_arc_index = 0
+var active_slide_note = null
 
 func _ready():
 	# 游戏开始时调用
@@ -597,7 +608,7 @@ func _process(_delta):
 			spawn_note(note_time, next_note[1])
 			next_note_index += 1
 	
-			# --- Arc Note 生成逻辑 ---
+	# --- Arc Note 生成逻辑 ---
 	if next_arc_index < arc_chart_data.size():
 		var next_arc_data = arc_chart_data[next_arc_index]
 		var arc_start_time = next_arc_data[0]
@@ -610,6 +621,17 @@ func _process(_delta):
 		if song_position_sec >= arc_start_time - spawn_lead_time:
 			spawn_arc(next_arc_data)
 			next_arc_index += 1
+	
+	# --- Slide Note 生成逻辑 ---
+	if next_slide_index < slide_chart_data.size():
+		var next_slide = slide_chart_data[next_slide_index]
+		var note_time = next_slide[0]
+		var spawn_lead_time = abs(NOTE_SPAWN_Z) / NOTE_SPEED
+		
+		if song_position_sec >= note_time - spawn_lead_time:
+			spawn_slide(next_slide)
+			next_slide_index += 1
+
 	
 	# --- Arc 连续判定逻辑 ---
 	# 首先，检查是否有新的 Arc 变成了 "当前活跃" 的
@@ -640,7 +662,39 @@ func _process(_delta):
 				score_display.scores = int(scores)
 			else:
 				# 在区间外
-				print("Arc: EMPTY")
+				pass
+	# --- Slide Note 判定逻辑 ---
+	# 1. 检查是否有新的 Slide Note 进入判定窗口
+	if active_slide_note == null:
+		for node in get_children():
+			# 找到一个还未被判定的 Slide Note
+			if node is SlideNote and not node.was_judged:
+				var time_diff = abs(node.target_time - song_position_sec)
+				# 使用与 Blur 相同的判定窗口
+				if time_diff <= JUDGE_WINDOW_BLUR:
+					# 新增：获取 Note 的左右边界
+					var note_x = node.position.x
+					# 注意：node.scale.x 可能为负数（用于翻转），所以要用 abs()
+					var note_half_width = abs(node.scale.x) / 2.0 
+					var note_left_bound = note_x - note_half_width
+					var note_right_bound = note_x + note_half_width
+					# 新增：检查光标是否在 Note 的范围内
+					if sky_cursor.position.x >= note_left_bound and sky_cursor.position.x <= note_right_bound:
+						# 只有当时间和空间都正确时，才激活 Note
+						active_slide_note = node
+						active_slide_note.enter_judge_window(sky_cursor.position.x)
+						break # 找到一个就够了，跳出循环
+
+	
+	# 2. 如果存在一个活跃的 Slide Note，则持续进行判定
+	if active_slide_note:
+		var is_finished = active_slide_note.judge_slide(sky_cursor.position.x)
+		
+		# 如果判定已完成，或者 Note 已经错过了判定窗口，则清空
+		var time_diff_from_target = song_position_sec - active_slide_note.target_time
+		if is_finished or time_diff_from_target > JUDGE_WINDOW_BLUR:
+			active_slide_note = null
+
 
 
 
@@ -681,6 +735,38 @@ func spawn_arc(arc_data):
 	# 先把它添加到场景树中
 	add_child(arc_instance)
 
+func spawn_slide(slide_data):
+	var slide_instance = SLIDE_NOTE_SCENE.instantiate()
+	# 1. 传递基础信息
+	slide_instance.target_time = slide_data[0]
+	slide_instance.direction = slide_data[3] # 脚本内部依然需要知道方向
+	slide_instance.note_speed = NOTE_SPEED
+	# 2. 设置 Note 的宽度和方向
+	# slide_data[2] 是谱面中定义的宽度
+	# slide_data[3] 是方向 (-1 或 1)
+	slide_instance.scale.x = slide_data[2] * slide_data[3]
+	# 3. 设置 Note 的位置
+	# Y 轴位置和 Z 轴位置的逻辑保持不变
+	slide_instance.position.x = slide_data[1]
+	var time_until_hit = slide_instance.target_time - song_position_sec
+	slide_instance.position.y = 0.675 
+	slide_instance.position.z = -time_until_hit * NOTE_SPEED
+	add_child(slide_instance)
+
+
+func add_score(judgement: String):
+	var base_score = 100000000 / 504 # 假设总物量是504
+	match judgement:
+		"Exact+":
+			scores += base_score + 1
+		"Exact":
+			scores += base_score
+		"Blur":
+			scores += base_score * 0.4
+		"Empty":
+			# Empty 不加分
+			pass
+	score_display.scores = int(scores)
 
 
 func _input(event):
@@ -707,13 +793,13 @@ func judge_press(track_num):
 		var diff = best_note_to_hit.target_time - press_time
 		if abs(diff) <= JUDGE_WINDOW_EXACT_PLUS:
 			print("Exact+! 误差:", diff * 1000, "ms")
-			scores += (100000000 / 504) * 1 + 1
+			add_score("Exact+")
 		elif abs(diff) <= JUDGE_WINDOW_EXACT:
 			print("Exact! 误差:", diff * 1000, "ms")
-			scores += (100000000 / 504) * 1
+			add_score("Exact")
 		elif abs(diff) <= JUDGE_WINDOW_BLUR:
 			print("Blur! 误差:", diff * 1000, "ms")
-			scores += (100000000 / 504) * 0.3
+			add_score("Blur")
 		
 		# 销毁被击中的Note
 		best_note_to_hit.queue_free()
@@ -722,6 +808,7 @@ func judge_press(track_num):
 	else:
 		# 如果按键时附近没有Note，也可以判定为过早的Empty
 		print("Empty! (Too Early or Missed)")
+		add_score("Empty")
 
 
 func _unhandled_input(event):
