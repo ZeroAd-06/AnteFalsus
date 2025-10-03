@@ -1,5 +1,5 @@
 # AnteFalsus
-A WIP simulator for the upcoming rhythm game, **[InFalsus](https://store.steampowered.com/app/3971950/In_Falsus/)**.
+>A WIP simulator for the upcoming rhythm game, **[InFalsus](https://store.steampowered.com/app/3971950/In_Falsus/)**.
 ---
 ## About the Project
 
