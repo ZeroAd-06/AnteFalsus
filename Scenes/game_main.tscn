@@ -98,6 +98,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.645, -0.5)
 
 [node name="TimeDisplay" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2974324, 1.0551133, -0.1547594)
+visible = false
 pixel_size = 0.0075
 text = "1111111111"
 script = ExtResource("8_ikmlx")
