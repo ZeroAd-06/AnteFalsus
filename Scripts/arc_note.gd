@@ -64,10 +64,16 @@ func generate_mesh():
 	mesh_instance.mesh = array_mesh
 
 	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.5, 1.0, 0.3)
+	mat.albedo_color = Color(0.7, 0.4, 0.7, 0.3)
 	mat.transparency = StandardMaterial3D.TRANSPARENCY_ALPHA
-	mesh_instance.material_override = mat
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED 
+	mesh_instance.material_override = mat
+
+func change_mesh_color(color):
+	var mat = mesh_instance.material_override
+	mat.albedo_color = color
+	mesh_instance.material_override = mat
+	
 
 # 根据歌曲时间，计算出当前光标应该在的左右边界
 func get_boundaries_at_time(time: float) -> Vector2:

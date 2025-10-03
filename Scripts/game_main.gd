@@ -134,7 +134,7 @@ var arc_chart_data = [
 	# 00:12 - 00:22 (构建) - 快速收缩，制造紧张感
 	[15.0, 21.8, [
 		[15.0, -3.6, 3.6, "linear"], [18.0, -2.5, 2.5, "linear"],
-		[20.0, -0.5, 0.5, "linear"], [21.8, 0.0, 0.0, "linear"] # 最终汇聚于一点
+		[20.0, -0.5, 0.5, "linear"], [21.8, -0.5, 0.5, "linear"]
 	]],
 	# 00:22 - 00:44 (副歌 1) - 狂野的Z字形移动和宽度变化
 	[22.8, 43.5, [
@@ -311,9 +311,10 @@ func _process(delta):
 				# 可以在这里持续加分
 				scores += (100000000.0 / 723.0 * delta) # 假设一秒60帧，分数均摊
 				score_display.scores = int(scores)
+				currently_active_arc.change_mesh_color(Color(1.0, 0.5, 1.0, 0.3))
 			else:
 				# 在区间外
-				pass
+				currently_active_arc.change_mesh_color(Color(1.0, 0, 0, 0.3))
 	# --- Slide Note 判定逻辑 ---
 	# 1. 检查是否有新的 Slide Note 进入判定窗口
 	if active_slide_note == null:
