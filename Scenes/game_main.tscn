@@ -4,7 +4,7 @@
 [ext_resource type="Material" uid="uid://c7djbnxpeasph" path="res://Textures/leftest_ground_tracks.tres" id="1_me05n"]
 [ext_resource type="Material" uid="uid://dagy7ggnajc6m" path="res://Textures/ground_tracks.tres" id="2_ek0ft"]
 [ext_resource type="Material" uid="uid://dduikhdoviq0d" path="res://Textures/rightest_ground_tracks.tres" id="3_blpvf"]
-[ext_resource type="AudioStream" uid="uid://cm8p14bmeocuo" path="res://Charts/Sayonara.noc/Sayonara-Hatsukoi.mp3" id="5_ek0ft"]
+[ext_resource type="AudioStream" uid="uid://cxku5gt3ncpp" path="res://Charts/Yual - AnoYozora.mp3" id="5_ikmlx"]
 [ext_resource type="Script" uid="uid://c7jxwjv8m1aih" path="res://Scripts/score_display.gd" id="6_blpvf"]
 [ext_resource type="PackedScene" uid="uid://bg67a4jkycqkk" path="res://Scenes/sky_cursor.tscn" id="7_12ds4"]
 [ext_resource type="Script" uid="uid://cb6ok5i7tsmcd" path="res://Scripts/time_display.gd" id="8_ikmlx"]
@@ -85,7 +85,7 @@ mesh = SubResource("PlaneMesh_y0gf2")
 skeleton = NodePath("../Track2")
 
 [node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_ek0ft")
+stream = ExtResource("5_ikmlx")
 autoplay = true
 
 [node name="ScoreDisplay" type="Label3D" parent="."]

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://pfeoo2wt0ume"]
+
+[ext_resource type="Script" uid="uid://ceujiiye5hxw0" path="res://Scripts/judgement_display.gd" id="1_ke7x3"]
+
+[node name="JudgementDisplay" type="Label3D"]
+billboard = 2
+text = "Z_06"
+font_size = 72
+script = ExtResource("1_ke7x3")
