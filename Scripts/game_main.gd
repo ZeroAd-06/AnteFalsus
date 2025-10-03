@@ -97,13 +97,13 @@ var arc_chart_data = [
 		[35.11, -1.0, 1.0, "linear"],
 		[36.2, 1.5, 3.5, "linear"],
 		[37.7, -3.5, -1.5, "linear"],
-		[39.3, -0.5, 0.5, "linear"],
+		[39.3, -1.0, 1.0, "linear"],
 		[40.1, -3.5, -2.0, "linear"],
 		[40.9, 2.0, 3.5, "linear"],
 		[42.5, -2.0, 2.0, "linear"],
 		[44.0, -3.5, -2.5, "linear"],
-		[44.01, 3.0, 3.5, "linear"], # Very sharp position and width change
-		[45.3, -3.5, -3.0, "linear"],
+		[44.01, 2.0, 3.4, "linear"],
+		[45.3, -3.5, -2.5, "linear"],
 		[47.4, 0.0, 2.0, "linear"],
 		[49.2, -2.0, 0.0, "linear"],
 		[50.5, -3.5, 3.5, "linear"],
@@ -124,7 +124,7 @@ var arc_chart_data = [
 		[70.7, -2.5, 2.5, "linear"],
 		[72.7, -0.5, 0.5, "linear"],
 		[74.6, -3.5, 3.5, "linear"],
-		[76.0, 0.0, 0.0, "linear"] # Contract to center point for ending
+		[76.0, -0.5, 0.5, "linear"] # Contract to center point for ending
 	]]
 ]
 
@@ -152,9 +152,6 @@ var slide_chart_data = [
 	[38.0, -2.5, 2.0, 1], [38.2, -2.5, 2.0, -1],
 	[39.5, 0.0, 1.0, -1], [39.6, 0.0, 1.0, 1],
 	[41.1, 2.75, 1.5, -1],
-	[41.25, -2.75, 1.5, 1],
-	[44.2, -3.25, 1.0, 1], [44.4, 3.25, 1.0, -1], # Slides right after the snap
-	[46.4, 1.0, 1.5, -1], [46.6, 1.0, 1.5, 1],
 	[48.8, -1.0, 1.5, 1], [49.0, -1.0, 1.5, -1],
 	[51.0, 2.0, 3.0, -1], [51.2, -2.0, 3.0, 1],
 
@@ -168,8 +165,6 @@ var slide_chart_data = [
 	[71.0, 0.0, 5.0, -1],
 	[71.2, 0.0, 5.0, 1],
 	[73.0, 0.0, 1.0, 1], [73.2, 0.0, 1.0, -1], [73.4, 0.0, 1.0, 1], [73.6, 0.0, 1.0, -1], # Final flurry
-	[75.5, -3.0, 2.0, 1], # Slides into the final hold
-	[75.75, 3.0, 2.0, -1]
 ]
 var next_slide_index = 0
 var next_note_index = 0
@@ -256,7 +251,7 @@ func _process(delta):
 				# 在区间内
 				# print("Arc: EXACT+") # 频繁打印会卡，先注释掉
 				# 可以在这里持续加分
-				scores += (100000000.0 / 723.0 * delta) # 假设一秒60帧，分数均摊
+				scores += (100000000.0 / 239.0 * delta)
 				score_display.scores = int(scores)
 				currently_active_arc.change_mesh_color(Color(1.0, 0.5, 1.0, 0.3))
 			else:
@@ -354,7 +349,7 @@ func spawn_slide(slide_data):
 
 
 func add_score(judgement: String, position: Vector3):
-	var base_score = 100000000 / 723 # 假设总物量是723
+	var base_score = 100000000 / 239 # 假设总物量是239
 	match judgement:
 		"Exact+":
 			scores += base_score + 1
