@@ -59,8 +59,8 @@ func judge_slide(cursor_x_pos: float) -> bool:
 			get_parent().add_score("Exact+") # 让 game_main 处理加分
 		else:
 			# 方向错误
-			print("Slide: Empty (Wrong Direction)!")
-			get_parent().add_score("Empty")
+			print("Slide: Break (Wrong Direction)!")
+			get_parent().add_score("Break")
 		
 		# 标记为已判定并准备消失
 		was_judged = true

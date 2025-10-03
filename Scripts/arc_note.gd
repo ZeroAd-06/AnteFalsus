@@ -64,7 +64,7 @@ func generate_mesh():
 	mesh_instance.mesh = array_mesh
 
 	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.5, 1.0, 0.7)
+	mat.albedo_color = Color(1.0, 0.5, 1.0, 0.3)
 	mat.transparency = StandardMaterial3D.TRANSPARENCY_ALPHA
 	mesh_instance.material_override = mat
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED 

@@ -19,7 +19,7 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		# event.relative.x 是鼠标这一帧的横向移动量
 		# 我们累加这个移动量，然后限制范围
-		var new_x = position.x + (event.relative.x / viewport_width) * (max_x - min_x)
+		var new_x = position.x + (event.relative.x / viewport_width) * (max_x - min_x) * 2.0
 		
 		# 使用clamp函数将x坐标限制在min_x和max_x之间
 		position.x = clamp(new_x, min_x, max_x)

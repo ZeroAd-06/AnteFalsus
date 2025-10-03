@@ -27,7 +27,8 @@ func _process(delta):
 	
 	# 如果Note已经飘过判定线太远，就销毁自己
 	if new_z > 5.0: # 5.0 是一个容错值
-		print("Note错过了")
+		print("Break! (Missed)")
+		get_parent().add_score("Break")
 		queue_free()
 
 func get_is_note():
